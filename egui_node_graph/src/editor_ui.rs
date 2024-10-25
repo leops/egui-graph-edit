@@ -481,6 +481,7 @@ where
             Rect::from_min_size(*self.position + self.pan, Self::MAX_NODE_SIZE.into()),
             Layout::default(),
             self.node_id,
+            None,
         );
 
         Self::show_graph_node(self, &mut child_ui, user_state)
@@ -520,7 +521,7 @@ where
         inner_rect.max.x = inner_rect.max.x.max(inner_rect.min.x);
         inner_rect.max.y = inner_rect.max.y.max(inner_rect.min.y);
 
-        let mut child_ui = ui.child_ui(inner_rect, *ui.layout());
+        let mut child_ui = ui.child_ui(inner_rect, *ui.layout(), None);
 
         // Get interaction rect from memory, it may expand after the window response on resize.
         let interaction_rect = ui
@@ -801,6 +802,7 @@ where
             let titlebar_rect =
                 Rect::from_min_size(outer_rect.min, vec2(outer_rect.width(), titlebar_height));
             let titlebar = Shape::Rect(RectShape {
+                blur_width: 0.0,
                 rect: titlebar_rect,
                 rounding,
                 fill: self.graph[self.node_id]
@@ -817,6 +819,7 @@ where
                 vec2(outer_rect.width(), outer_rect.height() - titlebar_height),
             );
             let body = Shape::Rect(RectShape {
+                blur_width: 0.0,
                 rect: body_rect,
                 rounding: Rounding::ZERO,
                 fill: background_color,
@@ -830,6 +833,7 @@ where
                 vec2(outer_rect.width(), titlebar_height),
             );
             let bottom_body = Shape::Rect(RectShape {
+                blur_width: 0.0,
                 rect: bottom_body_rect,
                 rounding,
                 fill: background_color,
@@ -841,6 +845,7 @@ where
             let node_rect = titlebar_rect.union(body_rect).union(bottom_body_rect);
             let outline = if self.selected {
                 Shape::Rect(RectShape {
+                    blur_width: 0.0,
                     rect: node_rect.expand(1.0),
                     rounding,
                     fill: Color32::WHITE.lighten(0.8),
