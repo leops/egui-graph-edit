@@ -1,10 +1,10 @@
 [package]
 name = "egui-graph-edit"
 description = "A helper library to create interactive node graphs using egui"
-homepage = "https://github.com/setzer22/egui_node_graph"
-repository = "https://github.com/setzer22/egui_node_graph"
+homepage = "https://github.com/kamirr/egui-graph-edit"
+repository = "https://github.com/kamirr/egui-graph-edit"
 license = "MIT"
-version = "0.4.0"
+version = "0.5.0"
 keywords = ["ui", "egui", "graph", "node"]
 authors = ["Kamil Koczurek <koczurekk@gmail.com>", "setzer22"]
 edition = "2021"
