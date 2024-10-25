@@ -133,9 +133,6 @@ where
         // executed at the end of this function.
         let mut delayed_responses: Vec<NodeResponse<UserResponse, NodeData>> = prepend_responses;
 
-        // Used to detect when the background was clicked
-        let mut click_on_background = false;
-
         // Used to detect drag events in the background
         let mut drag_started_on_background = false;
         let mut drag_released_on_background = false;
@@ -150,11 +147,9 @@ where
         // Allocate rect before the nodes, otherwise this will block the interaction
         // with the nodes.
         let r = ui.allocate_rect(ui.min_rect(), Sense::click().union(Sense::drag()));
-        if r.clicked() {
-            click_on_background = true;
-        } else if r.drag_started() {
+        if r.drag_started() {
             drag_started_on_background = true;
-        } else if r.drag_released() {
+        } else if r.drag_stopped() {
             drag_released_on_background = true;
         }
 
@@ -182,7 +177,7 @@ where
         /* Draw the node finder, if open */
         let mut should_close_node_finder = false;
         if let Some(ref mut node_finder) = self.node_finder {
-            let mut node_finder_area = Area::new("node_finder").order(Order::Foreground);
+            let mut node_finder_area = Area::new(Id::from("node_finder")).order(Order::Foreground);
             if let Some(pos) = node_finder.position {
                 node_finder_area = node_finder_area.current_pos(pos);
             }
@@ -408,7 +403,7 @@ where
             self.connection_in_progress = None;
         }
 
-        if mouse.secondary_released() && cursor_in_editor && !cursor_in_finder {
+        if mouse.secondary_released() && !cursor_in_finder {
             self.node_finder = Some(NodeFinder::new_at(cursor_pos));
         }
         if ui.ctx().input(|i| i.key_pressed(Key::Escape)) {
@@ -421,7 +416,7 @@ where
 
         // Deselect and deactivate finder if the editor backround is clicked,
         // *or* if the the mouse clicks off the ui
-        if click_on_background || (mouse.any_click() && !cursor_in_editor) {
+        if mouse.any_pressed() && !cursor_in_finder {
             self.selected_nodes = Vec::new();
             self.node_finder = None;
         }
@@ -482,10 +477,14 @@ where
         ui: &mut Ui,
         user_state: &mut UserState,
     ) -> Vec<NodeResponse<UserResponse, NodeData>> {
-        let mut child_ui = ui.child_ui_with_id_source(
-            Rect::from_min_size(*self.position + self.pan, Self::MAX_NODE_SIZE.into()),
-            Layout::default(),
-            self.node_id,
+        let mut child_ui = ui.new_child(
+            UiBuilder::new()
+                .max_rect(Rect::from_min_size(
+                    *self.position + self.pan,
+                    Self::MAX_NODE_SIZE.into(),
+                ))
+                .layout(*ui.layout())
+                .id_salt(self.node_id),
         );
 
         Self::show_graph_node(self, &mut child_ui, user_state)
@@ -525,7 +524,7 @@ where
         inner_rect.max.x = inner_rect.max.x.max(inner_rect.min.x);
         inner_rect.max.y = inner_rect.max.y.max(inner_rect.min.y);
 
-        let mut child_ui = ui.child_ui(inner_rect, *ui.layout());
+        let mut child_ui = ui.new_child(UiBuilder::new().max_rect(inner_rect).layout(*ui.layout()));
 
         // Get interaction rect from memory, it may expand after the window response on resize.
         let interaction_rect = ui
@@ -551,17 +550,20 @@ where
 
         child_ui.vertical(|ui| {
             ui.horizontal(|ui| {
-                ui.add(Label::new(
-                    RichText::new(&self.graph[self.node_id].label)
-                        .text_style(TextStyle::Button)
-                        .color(text_color),
-                ));
-                responses.extend(
-                    self.graph[self.node_id]
-                        .user_data
-                        .top_bar_ui(ui, self.node_id, self.graph, user_state)
-                        .into_iter(),
+                ui.add(
+                    Label::new(
+                        RichText::new(&self.graph[self.node_id].label)
+                            .text_style(TextStyle::Button)
+                            .color(text_color),
+                    )
+                    .selectable(false),
                 );
+                responses.extend(self.graph[self.node_id].user_data.top_bar_ui(
+                    ui,
+                    self.node_id,
+                    self.graph,
+                    user_state,
+                ));
                 ui.add_space(8.0); // The size of the little cross icon
             });
             ui.add_space(margin.y);
@@ -640,12 +642,12 @@ where
                 output_port_heights.push((height_before + height_after) / 2.0);
             }
 
-            responses.extend(
-                self.graph[self.node_id]
-                    .user_data
-                    .bottom_ui(ui, self.node_id, self.graph, user_state)
-                    .into_iter(),
-            );
+            responses.extend(self.graph[self.node_id].user_data.bottom_ui(
+                ui,
+                self.node_id,
+                self.graph,
+                user_state,
+            ));
         });
 
         // Second pass, iterate again to draw the ports. This happens outside
@@ -803,6 +805,7 @@ where
             let titlebar_rect =
                 Rect::from_min_size(outer_rect.min, vec2(outer_rect.width(), titlebar_height));
             let titlebar = Shape::Rect(RectShape {
+                blur_width: 0.0,
                 rect: titlebar_rect,
                 rounding,
                 fill: self.graph[self.node_id]
@@ -810,6 +813,8 @@ where
                     .titlebar_color(ui, self.node_id, self.graph, user_state)
                     .unwrap_or_else(|| background_color.lighten(0.8)),
                 stroke: Stroke::NONE,
+                fill_texture_id: Default::default(),
+                uv: Rect::ZERO,
             });
 
             let body_rect = Rect::from_min_size(
@@ -817,10 +822,13 @@ where
                 vec2(outer_rect.width(), outer_rect.height() - titlebar_height),
             );
             let body = Shape::Rect(RectShape {
+                blur_width: 0.0,
                 rect: body_rect,
-                rounding: Rounding::none(),
+                rounding: Rounding::ZERO,
                 fill: background_color,
                 stroke: Stroke::NONE,
+                fill_texture_id: Default::default(),
+                uv: Rect::ZERO,
             });
 
             let bottom_body_rect = Rect::from_min_size(
@@ -828,19 +836,25 @@ where
                 vec2(outer_rect.width(), titlebar_height),
             );
             let bottom_body = Shape::Rect(RectShape {
+                blur_width: 0.0,
                 rect: bottom_body_rect,
                 rounding,
                 fill: background_color,
                 stroke: Stroke::NONE,
+                fill_texture_id: Default::default(),
+                uv: Rect::ZERO,
             });
 
             let node_rect = titlebar_rect.union(body_rect).union(bottom_body_rect);
             let outline = if self.selected {
                 Shape::Rect(RectShape {
+                    blur_width: 0.0,
                     rect: node_rect.expand(1.0),
                     rounding,
                     fill: Color32::WHITE.lighten(0.8),
                     stroke: Stroke::NONE,
+                    fill_texture_id: Default::default(),
+                    uv: Rect::ZERO,
                 })
             } else {
                 Shape::Noop

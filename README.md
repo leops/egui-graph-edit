@@ -1,16 +1,14 @@
-# Egui Node Graph
-> There you have it! Now go build your next awesome node graph thing in Rust 🦀
+# Egui Graph Edit
+> Fork of [egui_node_graph](https://github.com/setzer22/egui_node_graph)
 
 [![Latest version](https://img.shields.io/crates/v/egui_node_graph.svg)](https://crates.io/crates/egui_node_graph)
 [![Documentation](https://docs.rs/egui_node_graph/badge.svg)](https://docs.rs/egui_node_graph)
 ![MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 [![unsafe forbidden](https://img.shields.io/badge/unsafe-forbidden-success.svg)](https://github.com/rust-secure-code/safety-dance/)
 
-**ARCHIVED REPOSITORY** This repository is now archived because of a variety of technical and political reasons that made me loose my motivation to continue contributing to the Rust community in my free time.
-
 ![Showcase image](showcase.png)
 
-**Egui node graph** is a featureful, customizable library to create node graph
+**Egui Graph Edit** is a featureful, customizable library to create node graph
 applications using [egui](https://github.com/emilk/egui). The library takes care
 of presenting a node graph to your users, and allows customizing many aspects of
 the interaction, creating the semantics you want for your specific application.
@@ -31,7 +29,7 @@ To see a node graph in action, simply clone this repository and launch the
 example using `cargo run`. This should open a window with an empty canvas. Right
 clicking anywhere on the screen will bring up the *node finder* menu.
 
-The [application code in the example](https://github.com/setzer22/egui_node_graph/blob/main/egui_node_graph_example/src/app.rs)
+The [application code in the example](https://github.com/kamirr/egui-graph-edit/blob/main/egui-graph-edit-example/src/app.rs)
 is thoroughly commented and serves as a good introduction to embedding this
 library in your egui project.
 
@@ -56,11 +54,14 @@ still considered breaking.
 
 ## Use cases
 
-**Egui node graph** is the library powering the graph user interface of
-[Blackjack](https://github.com/setzer22/blackjack), a 3d procedural modelling
+[Blackjack](https://github.com/setzer22/blackjack) is a 3d procedural modelling
 software built in Rust using egui, rend3 and wgpu.
-![Main interface of blackjack](https://raw.githubusercontent.com/setzer22/blackjack/main/doc/resources/showcase.png)
-Are you using this crate for something cool? Add yourself to this section by sending a PR!
+
+[Modal](https://github.com/kamirr/modal) is a modular sound synthesiser built
+using **Egui Graph Edit** and a ton of math.
+
+Are you using this crate for something cool? Add yourself to this section by
+sending a PR!
 
 ## Contributing 
 Contributions are welcome! Before writing a PR, please get in touch by filing an issue 😄
