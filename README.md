@@ -6,7 +6,7 @@
 ![MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 [![unsafe forbidden](https://img.shields.io/badge/unsafe-forbidden-success.svg)](https://github.com/rust-secure-code/safety-dance/)
 
-![Showcase image](showcase.png)
+![Showcase image](https://raw.githubusercontent.com/kamirr/egui-graph-edit/main/showcase.png)
 
 **Egui Graph Edit** is a featureful, customizable library to create node graph
 applications using [egui](https://github.com/emilk/egui). The library takes care
