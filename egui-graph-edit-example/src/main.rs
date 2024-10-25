@@ -13,13 +13,15 @@ fn main() {
         "Egui Graph Edit example",
         eframe::NativeOptions::default(),
         Box::new(|cc| {
-            cc.egui_ctx.set_visuals(Visuals::dark());
-            #[cfg(feature = "persistence")]
-            {
-                Box::new(NodeGraphExample::new(cc))
-            }
-            #[cfg(not(feature = "persistence"))]
-            Ok(Box::<NodeGraphExample>::default())
+            Ok({
+                cc.egui_ctx.set_visuals(Visuals::dark());
+                #[cfg(feature = "persistence")]
+                {
+                    Box::new(NodeGraphExample::new(cc))
+                }
+                #[cfg(not(feature = "persistence"))]
+                Box::<NodeGraphExample>::default()
+            })
         }),
     )
     .expect("Failed to run native example");
