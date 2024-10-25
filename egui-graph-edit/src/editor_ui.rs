@@ -561,8 +561,7 @@ where
                 responses.extend(
                     self.graph[self.node_id]
                         .user_data
-                        .top_bar_ui(ui, self.node_id, self.graph, user_state)
-                        .into_iter(),
+                        .top_bar_ui(ui, self.node_id, self.graph, user_state),
                 );
                 ui.add_space(8.0); // The size of the little cross icon
             });
@@ -645,8 +644,7 @@ where
             responses.extend(
                 self.graph[self.node_id]
                     .user_data
-                    .bottom_ui(ui, self.node_id, self.graph, user_state)
-                    .into_iter(),
+                    .bottom_ui(ui, self.node_id, self.graph, user_state),
             );
         });
 
