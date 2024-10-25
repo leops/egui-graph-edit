@@ -29,7 +29,7 @@ To see a node graph in action, simply clone this repository and launch the
 example using `cargo run`. This should open a window with an empty canvas. Right
 clicking anywhere on the screen will bring up the *node finder* menu.
 
-The [application code in the example](https://github.com/setzer22/egui_node_graph/blob/main/egui_node_graph_example/src/app.rs)
+The [application code in the example](https://github.com/kamirr/egui-graph-edit/blob/main/egui-graph-edit-example/src/app.rs)
 is thoroughly commented and serves as a good introduction to embedding this
 library in your egui project.
 
