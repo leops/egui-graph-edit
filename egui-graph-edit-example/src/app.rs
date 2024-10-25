@@ -1,7 +1,7 @@
 use std::{borrow::Cow, collections::HashMap};
 
 use eframe::egui::{self, DragValue, TextStyle};
-use egui_node_graph::*;
+use egui_graph_edit::*;
 
 // ========= First, define your user data types =============
 
@@ -382,7 +382,7 @@ pub struct NodeGraphExample {
 }
 
 #[cfg(feature = "persistence")]
-const PERSISTENCE_KEY: &str = "egui_node_graph";
+const PERSISTENCE_KEY: &str = "egui_graph_edit";
 
 #[cfg(feature = "persistence")]
 impl NodeGraphExample {
@@ -412,7 +412,7 @@ impl eframe::App for NodeGraphExample {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::TopBottomPanel::top("top").show(ctx, |ui| {
             egui::menu::bar(ui, |ui| {
-                egui::widgets::global_dark_light_mode_switch(ui);
+                egui::widgets::global_theme_preference_switch(ui);
             });
         });
         let graph_response = egui::CentralPanel::default()
