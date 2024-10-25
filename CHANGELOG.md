@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 0.5.1
+
+### Changed
+- Fix README.md URLs. By @kamirr
+
+## 0.5.0
+
+### Changed
+- Fork from [egui_node_graph](https://github.com/setzer22/egui_node_graph/). By @kamirr
+- Update egui to 0.29.1. By @kamirr
+
 ## 0.4.0
 
 ### Changed
