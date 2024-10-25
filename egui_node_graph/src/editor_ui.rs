@@ -133,9 +133,6 @@ where
         // executed at the end of this function.
         let mut delayed_responses: Vec<NodeResponse<UserResponse, NodeData>> = prepend_responses;
 
-        // Used to detect when the background was clicked
-        let mut click_on_background = false;
-
         // Used to detect drag events in the background
         let mut drag_started_on_background = false;
         let mut drag_released_on_background = false;
@@ -150,11 +147,9 @@ where
         // Allocate rect before the nodes, otherwise this will block the interaction
         // with the nodes.
         let r = ui.allocate_rect(ui.min_rect(), Sense::click().union(Sense::drag()));
-        if r.clicked() {
-            click_on_background = true;
-        } else if r.drag_started() {
+        if r.drag_started() {
             drag_started_on_background = true;
-        } else if r.drag_released() {
+        } else if r.drag_stopped() {
             drag_released_on_background = true;
         }
 
@@ -182,7 +177,7 @@ where
         /* Draw the node finder, if open */
         let mut should_close_node_finder = false;
         if let Some(ref mut node_finder) = self.node_finder {
-            let mut node_finder_area = Area::new("node_finder").order(Order::Foreground);
+            let mut node_finder_area = Area::new(Id::from("node_finder")).order(Order::Foreground);
             if let Some(pos) = node_finder.position {
                 node_finder_area = node_finder_area.current_pos(pos);
             }
@@ -408,7 +403,7 @@ where
             self.connection_in_progress = None;
         }
 
-        if mouse.secondary_released() && cursor_in_editor && !cursor_in_finder {
+        if mouse.secondary_released() && !cursor_in_finder {
             self.node_finder = Some(NodeFinder::new_at(cursor_pos));
         }
         if ui.ctx().input(|i| i.key_pressed(Key::Escape)) {
@@ -421,7 +416,7 @@ where
 
         // Deselect and deactivate finder if the editor backround is clicked,
         // *or* if the the mouse clicks off the ui
-        if click_on_background || (mouse.any_click() && !cursor_in_editor) {
+        if mouse.any_pressed() && !cursor_in_finder {
             self.selected_nodes = Vec::new();
             self.node_finder = None;
         }
@@ -551,11 +546,14 @@ where
 
         child_ui.vertical(|ui| {
             ui.horizontal(|ui| {
-                ui.add(Label::new(
-                    RichText::new(&self.graph[self.node_id].label)
-                        .text_style(TextStyle::Button)
-                        .color(text_color),
-                ));
+                ui.add(
+                    Label::new(
+                        RichText::new(&self.graph[self.node_id].label)
+                            .text_style(TextStyle::Button)
+                            .color(text_color),
+                    )
+                    .selectable(false),
+                );
                 responses.extend(
                     self.graph[self.node_id]
                         .user_data
