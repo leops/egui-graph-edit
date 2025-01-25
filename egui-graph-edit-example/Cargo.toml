@@ -9,7 +9,7 @@ rust-version = "1.56"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-eframe = "0.29.1"
+eframe = "0.30"
 egui-graph-edit = { path = "../egui-graph-edit" }
 anyhow = "1.0"
 serde = { version = "1.0", optional = true }
