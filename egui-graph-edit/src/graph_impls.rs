@@ -256,14 +256,14 @@ impl<NodeData> Node<NodeData> {
     pub fn inputs<'a, DataType: PartialEq, DataValue>(
         &'a self,
         graph: &'a Graph<NodeData, DataType, DataValue>,
-    ) -> impl Iterator<Item = &InputParam<DataType, DataValue>> + 'a {
+    ) -> impl Iterator<Item = &'a InputParam<DataType, DataValue>> + 'a {
         self.input_ids().map(|id| graph.get_input(id))
     }
 
     pub fn outputs<'a, DataType: PartialEq, DataValue>(
         &'a self,
         graph: &'a Graph<NodeData, DataType, DataValue>,
-    ) -> impl Iterator<Item = &OutputParam<DataType>> + 'a {
+    ) -> impl Iterator<Item = &'a OutputParam<DataType>> + 'a {
         self.output_ids().map(|id| graph.get_output(id))
     }
 
