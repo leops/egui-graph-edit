@@ -457,8 +457,8 @@ fn draw_connection(painter: &Painter, src_pos: Pos2, dst_pos: Pos2, color: Color
 #[derive(Clone, Copy, Debug)]
 struct OuterRectMemory(Rect);
 
-impl<'a, NodeData, DataType, ValueType, UserResponse, UserState>
-    GraphNodeWidget<'a, NodeData, DataType, ValueType>
+impl<NodeData, DataType, ValueType, UserResponse, UserState>
+    GraphNodeWidget<'_, NodeData, DataType, ValueType>
 where
     NodeData: NodeDataTrait<
         Response = UserResponse,
