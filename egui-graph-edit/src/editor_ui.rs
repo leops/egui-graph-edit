@@ -428,7 +428,7 @@ where
                 2.0,
                 bg_color,
                 Stroke::new(3.0, stroke_color),
-                StrokeKind::Inside,
+                StrokeKind::Outside,
             );
 
             self.selected_nodes = node_rects
@@ -512,6 +512,21 @@ fn draw_connection(
     );
 
     painter.add(bezier);
+
+    let [r, g, b, a] = color.to_srgba_unmultiplied();
+    let wide_stroke = egui::Stroke {
+        width: 10.0,
+        color: Color32::from_rgba_unmultiplied(r / 2, g / 2, b / 2, a / 2),
+    };
+
+    let wide_bezier = CubicBezierShape::from_points_stroke(
+        [src_pos, src_control, dst_control, dst_pos],
+        false,
+        Color32::TRANSPARENT,
+        wide_stroke,
+    );
+
+    painter.add(wide_bezier);
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -758,7 +773,10 @@ where
         {
             let port_type = graph.any_param_type(param_id).unwrap();
 
-            let port_rect = Rect::from_center_size(port_pos, egui::vec2(10.0, 10.0));
+            let port_rect = Rect::from_center_size(
+                port_pos,
+                egui::vec2(DISTANCE_TO_CONNECT * 2.0, DISTANCE_TO_CONNECT * 2.0),
+            );
 
             let sense = if ongoing_drag.is_some() {
                 Sense::hover()
