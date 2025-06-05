@@ -470,7 +470,7 @@ where
 
         // Deselect and deactivate finder if the editor backround is clicked,
         // *or* if the the mouse clicks off the ui
-        if mouse.any_pressed() && !cursor_in_finder {
+        if mouse.any_pressed() && !cursor_in_finder && cursor_in_editor {
             self.selected_nodes = Vec::new();
             self.node_finder = None;
         }
