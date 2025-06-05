@@ -125,7 +125,7 @@ where
         let cursor_pos = ui
             .ctx()
             .input(|i| i.pointer.hover_pos().unwrap_or(Pos2::ZERO));
-        let mut cursor_in_editor = resp.hovered();
+        let mut cursor_in_editor = resp.rect.contains(cursor_pos);
         let mut cursor_in_finder = false;
 
         // Gets filled with the node metrics as they are drawn
@@ -471,7 +471,9 @@ where
         // Deselect and deactivate finder if the editor backround is clicked,
         // *or* if the the mouse clicks off the ui
         if mouse.any_pressed() && !cursor_in_finder {
-            self.selected_nodes = Vec::new();
+            if cursor_in_editor {
+                self.selected_nodes = Vec::new();
+            }
             self.node_finder = None;
         }
 
